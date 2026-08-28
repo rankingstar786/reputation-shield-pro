@@ -143,7 +143,7 @@ function ScannerPage() {
               </p>
               <p className="text-sm text-muted-foreground">
                 {processed} of {total} reviews analyzed
-                {job?.failed_reviews ? ` · ${job.failed_reviews} failed` : ""}
+                {job?.flagged_reviews ? ` · ${job.flagged_reviews} flagged` : ""}
               </p>
             </div>
             <span className="font-display text-3xl font-bold tabular-nums text-gradient">{pct}%</span>

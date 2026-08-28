@@ -283,12 +283,12 @@ function ImportDialog({ businessId, onClose }: { businessId: string; onClose: ()
 }
 
 type ImportRow = {
-  source_review_id?: string;
-  reviewer_name?: string;
+  source_review_id?: string | undefined;
+  reviewer_name?: string | undefined;
   rating: number;
-  review_text?: string;
-  review_date?: string;
-  location_name?: string;
+  review_text?: string | undefined;
+  review_date?: string | undefined;
+  location_name?: string | undefined;
 };
 
 function parseImport(raw: string): ImportRow[] {
