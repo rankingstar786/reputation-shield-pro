@@ -60,12 +60,12 @@ function ScannerPage() {
         const result = await process({ data: { jobId } });
         setLog((entries) =>
           [
-            `${new Date().toLocaleTimeString()} — ${result.processed ?? 0} reviews analyzed (${result.status})`,
+            `${new Date().toLocaleTimeString()} — ${result.job.processed_reviews}/${result.job.total_reviews} analyzed · ${result.flagged} flagged this batch`,
             ...entries,
           ].slice(0, 40),
         );
         await refetch();
-        if (result.status !== "running") break;
+        if (result.done) break;
         await new Promise((resolve) => setTimeout(resolve, 900));
       }
     } catch (caught) {
