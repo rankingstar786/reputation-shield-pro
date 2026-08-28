@@ -2,12 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const CreateBusiness = z.object({
-  name: z.string().min(1).max(120),
-  industry: z.string().max(80).nullable().optional(),
-  website: z.string().max(200).nullable().optional(),
-});
-
 /** Returns every business the caller can access, with locations. Creates nothing. */
 export const getWorkspace = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -41,7 +35,14 @@ export const getWorkspace = createServerFn({ method: "GET" })
 
 export const createBusiness = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => CreateBusiness.parse(input))
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        name: z.string().min(1).max(120),
+        industry: z.string().max(80).nullable().optional(),
+        website: z.string().max(200).nullable().optional(),
+      })
+      .parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: business, error } = await supabase
@@ -64,19 +65,20 @@ export const createBusiness = createServerFn({ method: "POST" })
     return business;
   });
 
-const UpsertLocation = z.object({
-  id: z.string().uuid().nullable().optional(),
-  business_id: z.string().uuid(),
-  name: z.string().min(1).max(120),
-  address: z.string().max(240).nullable().optional(),
-  city: z.string().max(120).nullable().optional(),
-  country: z.string().max(120).nullable().optional(),
-  google_place_id: z.string().max(200).nullable().optional(),
-});
-
 export const upsertLocation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => UpsertLocation.parse(input))
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        id: z.string().uuid().nullable().optional(),
+        business_id: z.string().uuid(),
+        name: z.string().min(1).max(120),
+        address: z.string().max(240).nullable().optional(),
+        city: z.string().max(120).nullable().optional(),
+        country: z.string().max(120).nullable().optional(),
+        google_place_id: z.string().max(200).nullable().optional(),
+      })
+      .parse(input))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
     const payload = {
