@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import type { Database } from "@/integrations/supabase/types";
 import { analyzeReviews, draftReviewResponse } from "./review-analysis.server";
 
 /** Paginated, filtered, sorted review feed for one business. */
@@ -383,9 +384,10 @@ export const bulkUpdateReviews = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = {};
-    if (data.priority) patch["priority"] = data.priority;
-    if (data.category) patch["violation_category"] = data.category;
+    const patch: Database["public"]["Tables"]["reviews"]["Update"] = {};
+    if (data.priority) patch.priority = data.priority as Database["public"]["Enums"]["review_priority"];
+    if (data.category)
+      patch.violation_category = data.category as Database["public"]["Enums"]["violation_category"];
     if (Object.keys(patch).length === 0) return { updated: 0 };
     const { error, count } = await context.supabase
       .from("reviews")

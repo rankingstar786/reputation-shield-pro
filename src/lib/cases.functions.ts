@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import type { Database } from "@/integrations/supabase/types";
 
 export const listCases = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -130,17 +131,17 @@ export const updateCase = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const patch: Record<string, unknown> = {};
+    const patch: Database["public"]["Tables"]["removal_cases"]["Update"] = {};
     if (data.status) {
-      patch["status"] = data.status;
-      if (data.status === "reported") patch["reported_at"] = new Date().toISOString();
-      if (data.status === "appeal") patch["appealed_at"] = new Date().toISOString();
+      patch.status = data.status;
+      if (data.status === "reported") patch.reported_at = new Date().toISOString();
+      if (data.status === "appeal") patch.appealed_at = new Date().toISOString();
       if (data.status === "resolved" || data.status === "rejected")
-        patch["resolved_at"] = new Date().toISOString();
+        patch.resolved_at = new Date().toISOString();
     }
-    if (data.notes !== undefined) patch["notes"] = data.notes;
-    if (data.assigned_to !== undefined) patch["assigned_to"] = data.assigned_to;
-    if (data.evidence) patch["evidence"] = data.evidence;
+    if (data.notes !== undefined) patch.notes = data.notes;
+    if (data.assigned_to !== undefined) patch.assigned_to = data.assigned_to;
+    if (data.evidence) patch.evidence = data.evidence;
 
     const { data: updated, error } = await supabase
       .from("removal_cases")
