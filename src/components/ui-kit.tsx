@@ -50,7 +50,7 @@ export function KpiCard({
 }: {
   label: string;
   value: string | number;
-  hint?: string;
+  hint?: string | undefined;
   tone?: "primary" | "neon" | "magenta" | "success" | "warning" | "danger";
   icon?: Icon3DName;
 }) {
